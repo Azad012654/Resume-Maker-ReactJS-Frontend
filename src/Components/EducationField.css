@@ -1,0 +1,40 @@
+
+  .dates{
+    display:flex;
+    margin-top:20px;
+  }
+  .education-details{
+    display:flex;
+    margin-top:10px;
+    
+  }
+  
+  .education-details p{
+    margin:1rem;
+  }
+  .education-details input{
+    margin:0.8rem;
+  }
+  /* .dates :nth-child(1){
+    display:flex;
+    align-items: center;
+  } */
+  .startdates{
+    display:flex;
+    align-items: center;
+    margin-left: 1rem;
+    margin-top:10px;
+  }
+  .startdates input{
+    width:250px;
+  }
+  .dates :nth-child(2){
+    display:flex;
+  }
+
+  .education-fields p{
+    font-size: medium;
+    font-weight: bold;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    
+  }

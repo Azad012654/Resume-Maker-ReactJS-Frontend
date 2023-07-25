@@ -1,0 +1,48 @@
+/* .App {
+  text-align: center;
+} */
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+body {
+  zoom: 1; /* For Chrome, Safari, and Opera */
+  -moz-transform: scale(0.8); /* For Firefox */
+  -ms-zoom: 0.8; /* For Internet Explorer/Edge */
+}
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+.default-zoom {
+  transform: scale(0.8);
+  transform-origin: top left; /* This ensures the content scales from the top-left corner */
+  width: 125%; /* Compensate for the reduced scale to prevent horizontal overflow */
+  height: 125%; /* Compensate for the reduced scale to prevent vertical overflow */
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
