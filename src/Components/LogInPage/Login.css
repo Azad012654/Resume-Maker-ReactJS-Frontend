@@ -1,0 +1,35 @@
+.main-login-container{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:95vh;
+    background-image: url('../../Assets/725.jpg');
+    background-size: cover;
+    position:absolute;
+    
+    width:100%;
+}
+.login-btn button{
+ display:flex;
+ position:relative;
+ align-items: center;
+ justify-content: center;
+ gap:0.3rem;
+ font-size: xx-large;
+ font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+ border-radius: 4px;
+ padding:5px;
+ 
+ 
+}
+.login-btn{
+    width:500px;
+    border: 2px solid black;
+    height:500px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(241, 226, 206, 0.6);
+    
+    border-radius: 6px;
+}

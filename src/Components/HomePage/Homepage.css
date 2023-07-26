@@ -1,4 +1,9 @@
 /* @import url('../../Fonts/Euclid\ Circular\ B\ Medium.ttf'); */
+body{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
 .wave{
     flex:1;
     bottom:0;
@@ -18,13 +23,16 @@
     font-family:'Euclid Circular B';
     
 }
-.image1{
+.home-page-container{
     height:92vh;
+}
+.image1{
+    height:93vh;
     width:100%;
     background-image: url('../../Assets/725.jpg');
     background-size: cover;
     position:absolute;
-    opacity: 0.4;
+    /* opacity: 0.4; */
 }
 .home-desc{
     flex:1;
@@ -36,7 +44,7 @@
     position:absolute;
     padding:1rem;
     /* border:1px solid black; */
-    background-color: rgb(255, 255, 255, .5);
+    background-color: rgb(255, 255, 255, .7);
     border-radius: 7px;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.19);
 
@@ -47,7 +55,7 @@
 }
 .content{
     display:flex;
-    height:95vh;
+    height:93vh;
     position: relative;
 }
 
