@@ -54,7 +54,7 @@ const Dashboard = () => {
   useEffect(() => {
     try {
       const fetchEducation = async () => {
-        await fetch(`http://localhost:8080/get-education/${encodeURIComponent(loggedUser)}`)
+        await fetch(`https://resume-builder-fatj.onrender.com/get-education/${encodeURIComponent(loggedUser)}`)
           .then((response) => {
             return response.json();
           }).then((data) => {
@@ -63,7 +63,7 @@ const Dashboard = () => {
       }
 
       const fetchExperience = async () => {
-        await fetch(`http://localhost:8080/get-experience/${encodeURIComponent(loggedUser)}`)
+        await fetch(`https://resume-builder-fatj.onrender.com/get-experience/${encodeURIComponent(loggedUser)}`)
           .then((experience_response) => {
             return experience_response.json();
           }).then((data) => {
@@ -74,7 +74,7 @@ const Dashboard = () => {
       }
       console.log(user.email)
       const fetchProjects = async () => {
-        await fetch(`http://localhost:8080/get-projects/${encodeURIComponent(loggedUser)}`)
+        await fetch(`https://resume-builder-fatj.onrender.com/get-projects/${encodeURIComponent(loggedUser)}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -83,7 +83,7 @@ const Dashboard = () => {
       }
 
       const fetchCertificate = async () => {
-        await fetch(`http://localhost:8080/get-certificate/${encodeURIComponent(loggedUser)}`)
+        await fetch(`https://resume-builder-fatj.onrender.com/get-certificate/${encodeURIComponent(loggedUser)}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -92,7 +92,7 @@ const Dashboard = () => {
       }
 
       const fetchSkills = async () => {
-        await fetch(`http://localhost:8080/get-skills/${encodeURIComponent(loggedUser)}`)
+        await fetch('https://resume-builder-fatj.onrender.com/get-skills/')
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -101,7 +101,7 @@ const Dashboard = () => {
       }
 
       const fetchPersonalData = async () => {
-        await fetch(`http://localhost:8080/get-personal/${encodeURIComponent(loggedUser)}`)
+        await fetch(`https://resume-builder-fatj.onrender.com/get-personal/${encodeURIComponent(loggedUser)}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -185,7 +185,7 @@ const Dashboard = () => {
 
   const deleteResume = async (resumeId) => {
 
-   await fetch(`http://localhost:8080/delete-resume/${encodeURIComponent(resumeId)}`, {
+   await fetch(`https://resume-builder-fatj.onrender.com/delete-resume/${encodeURIComponent(resumeId)}`, {
       method: 'delete'
     }).then((response) => {
       if(response.ok){
@@ -198,8 +198,20 @@ const Dashboard = () => {
   }
   
   //----------------ends----------------------
-  if (loading) {
-    return (<div style={{ height: '100vh' }}>Loading</div>)
+  if (education.length<0) {
+    return (
+      <div className='container'>
+        <div className='loader'>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--text'></div>
+  </div>
+      </div>
+    )
   } else
     return (
       <div className='dashboard-container'>
