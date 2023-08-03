@@ -3,9 +3,10 @@
     justify-content: center;
     align-items: center;
     height:95vh;
-    background-image: url('../../Assets/725.jpg');
+    /* background-image: url('../../Assets/725.jpg'); */
     background-size: cover;
     position:absolute;
+    background-color: black;
     
     width:100%;
 }
@@ -19,8 +20,20 @@
  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
  border-radius: 4px;
  padding:5px;
+ box-shadow: 
+ 0 2px 3px 0 rgb(255, 251, 251), /* Top shadow */
+ 0 -2px 3px 0 rgb(255, 251, 251), /* Bottom shadow */
+ 2px 0 3px 0 rgb(255, 251, 251), /* Right shadow */
+ -2px 0 3px 0 rgb(255, 251, 251); /* Left shadow */
  
- 
+}
+.login-btn button:hover{
+    box-shadow: 
+    0 4px 6px 0 rgb(255, 251, 251), /* Top shadow */
+    0 -4px 6px 0 rgb(255, 251, 251), /* Bottom shadow */
+    4px 0 6px 0 rgb(255, 251, 251), /* Right shadow */
+    -4px 0 6px 0 rgb(255, 251, 251); /* Left shadow */
+   
 }
 .login-btn{
     width:500px;
@@ -29,7 +42,7 @@
     display:flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(241, 226, 206, 0.6);
+    /* background-color: rgb(241, 226, 206, 0.6); */
     
     border-radius: 6px;
 }

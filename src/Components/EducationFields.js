@@ -1,15 +1,9 @@
-import React from 'react';
+import {React, useEffect, useState} from 'react';
 import './EducationField.css';
 
-const EducationFields = ({ onChange },{handleEducationDelete}) => {
+const EducationFields = ({start,end,institute,course,score, onChange }) => {
 
-
-//   const [start,setStart]=useState("");
-//   const [end,setEnd]=useState("");
-//   const [institute,setInstitute]=useState("");
-//   const [course,setCourse]=useState("");
-//   const [score,setScore]=useState("");
-
+ 
   return (
     <div className="education-fields">
       <div className='dates'>
@@ -20,6 +14,8 @@ const EducationFields = ({ onChange },{handleEducationDelete}) => {
         placeholder="Start Date(YYYY-MM-DD)"
         onChange={onChange}
         name="start"
+        value={start}
+        
       />
       </div>
       <div className='startdates'>
@@ -28,6 +24,7 @@ const EducationFields = ({ onChange },{handleEducationDelete}) => {
         type="text"
         placeholder="End Date(YYYY-MM-DD)"
         onChange={onChange}
+        value={end}
         name="end"
       />
       </div>
@@ -45,18 +42,21 @@ const EducationFields = ({ onChange },{handleEducationDelete}) => {
         placeholder="Enter School/Institution name"
         onChange={onChange}
         name="institute"
+        value={institute}
       />
       <input
         type="text"
         placeholder="Course Type E.g - 10th, 12th, B.com, MCA,B.Tech e.t.c"
         onChange={onChange}
         name="course"
+        value={course}
       />
       <input
         type="number"
         placeholder="Percentage/gpa"
         onChange={onChange}
         name="score"
+        value={score}
       />
     </div>
 

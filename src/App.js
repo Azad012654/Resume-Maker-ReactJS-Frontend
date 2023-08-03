@@ -1,6 +1,7 @@
 
 import './App.css';
-import PDFGenerator from './Components/PDFGenerator';
+import {useState,useEffect} from 'react';
+import {PDFGenerator} from './Components/PDFGenerator';
 import Homepage from './Components/HomePage/Homepage'
 import Login from './Components/LogInPage/Login';
 import Header from './Components/HomePage/Header';
@@ -16,8 +17,22 @@ import {auth} from './Utills/Firebase'
 function App() {
   const navigate = useNavigate();
   const [user, loading]=useAuthState(auth);
-  console.log("Hi")
   
+  
+  // const [education,setEducation]=useState([]);
+  // const email = 'azadchauhan012654@gmail.com';
+
+  // useEffect(()=>{
+
+  // const response = fetch(`http://localhost:8080/get-education/${encodeURIComponent(email)}`)
+  // .then((response)=>{
+  //       return response.json();
+  // }).then((data)=>{
+  //     setEducation(data);
+  // })
+  // },[]);
+  // console.log(education)
+
 
   return (
     <div className="App">
@@ -26,6 +41,7 @@ function App() {
       {/* <Header /> */}
       {/* <Login /> */}
       {/* <Dashboard /> */}
+      
       <Routes>
       <Route exact path='/' element={<Homepage />} />
       <Route path='/login' element={<Login />}></Route>
@@ -35,10 +51,10 @@ function App() {
           path="/dashboard"
           element={user ? <Dashboard /> : <Homepage />}
         />
-      {/* ) : alert("Log") */}
-      {/* } */}
+        <Route path="/pdf-generator/:resumeId" element={<PDFGenerator />} />
       
       </Routes>
+      
     </div>
   );
 }

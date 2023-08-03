@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import Header from './Components/HomePage/Header';
-import Homepage from './Components/HomePage/Homepage';
+
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

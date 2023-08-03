@@ -1,7 +1,7 @@
 import React from 'react'
 import './Experience.css'
 
-const Experience = ({ onChange }) => {
+const Experience = ({ onChange,start,end,description,position,company }) => {
   return (
     <div className="education-fields">
 
@@ -14,6 +14,7 @@ const Experience = ({ onChange }) => {
             placeholder="Start Date(YYYY-MM-DD)"
             onChange={onChange}
             name="start"
+            value={start}
           />
         </div>
         <div>
@@ -23,6 +24,7 @@ const Experience = ({ onChange }) => {
             placeholder="End Date(YYYY-MM-DD)"
             onChange={onChange}
             name="end"
+            value={end}
           />
         </div>
       </div>
@@ -38,14 +40,16 @@ const Experience = ({ onChange }) => {
           placeholder="Enter Company Name"
           onChange={onChange}
           name="company"
+          value={company}
         />
          <input
           type="text"
           placeholder="Position"
           onChange={onChange}
           name="position"
+          value={position}
         />
-        <textarea placeholder='Enter your job description here' name="description" onChange={onChange} rows="4" cols="50"></textarea>
+        <textarea value={description} placeholder='Enter your job description here' name="description" onChange={onChange} rows="4" cols="50"></textarea>
 
       </div>
 

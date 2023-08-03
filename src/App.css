@@ -1,15 +1,24 @@
 /* .App {
   text-align: center;
 } */
+Link{
+  text-decoration: none;
+}
+.App{
+  /* height:93vh; */
+}
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
 body {
-  zoom: 1; /* For Chrome, Safari, and Opera */
-  -moz-transform: scale(0.8); /* For Firefox */
-  -ms-zoom: 0.8; /* For Internet Explorer/Edge */
+  max-height: -webkit-fill-available;
+  /* overflow-x: hidden; */
+  margin:0;
+  padding:0;
+  box-sizing: border-box;
+  background-color: black;
 }
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -17,10 +26,10 @@ body {
   }
 }
 .default-zoom {
-  transform: scale(0.8);
-  transform-origin: top left; /* This ensures the content scales from the top-left corner */
-  width: 125%; /* Compensate for the reduced scale to prevent horizontal overflow */
-  height: 125%; /* Compensate for the reduced scale to prevent vertical overflow */
+  /* transform: scale(0.8); */
+  /* transform-origin: top left; This ensures the content scales from the top-left corner */
+  /* width: 125%; Compensate for the reduced scale to prevent horizontal overflow */
+  /* height: 125%; Compensate for the reduced scale to prevent vertical overflow */
 }
 
 .App-header {

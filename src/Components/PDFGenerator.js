@@ -1,7 +1,6 @@
 import { React, useRef, useState, useEffect } from 'react'
 import './PDFGenerator.css';
 import { PDFViewer, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { Font } from '@react-pdf/renderer'
 import EducationFields from './EducationFields';
 import Experience from './Experience';
 import Skills from './Skills';
@@ -10,31 +9,74 @@ import { Certifications } from './Certifications';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import Header from '../Components/HomePage/Header';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../Utills/Firebase'
+import { useLocation } from 'react-router-dom';
 
-
-const PDFGenerator = () => {
-
+export const PDFGenerator = () => {
+  const location = useLocation();
+  const {
+    newEducation,
+    newExperience,
+    newSkill,
+    newProjects,
+    newCertification,
+    newPersonal,
+  } = location.state || {};
+   
+  const [user, loading] = useAuthState(auth);
   const [name, setName] = useState("");
   const [educationFields, setEducationFields] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
   const [experience, setExperience] = useState([]);
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
   const [certificate, setCertificate] = useState([]);
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [summary, setSummary] = useState("");
   const input = useRef(null);
   const [preview, setPreview] = useState(false);
+  const [email, setEmail] = useState("");
+  const [resumeId,setResumeId]=useState("");
+  const [deleteSpecific,setDeleteSpecific]=useState([]);
 
-  useEffect(() => {
-    setLoading(false);
-  }, [educationFields])
+  useEffect(()=>{
+    // if(!location.state){
+    //   setEducationFields(newEducation);
+    //   setExperience(newExperience)
+    //   setCertificate(newCertification)
+    //   setProjects(newProjects)
+    //   setSkills(newSkill)
+    // }
+    setEducationFields(newEducation ? newEducation : [])
+    setExperience(newExperience ? newExperience: [])
+    setSkills(newSkill ? newSkill :[])
+    setProjects(newProjects ? newProjects : [])
+    setCertificate(newCertification ? newCertification : [])
+    setName(newPersonal ? newPersonal[0].name : "")
+    setUserEmail(newPersonal ? newPersonal[0].useremail : "")
+    setSummary(newPersonal ? newPersonal[0].summary :'')
+    setPhone(newPersonal ? newPersonal[0].phone : '')
+    setResumeId(newPersonal ? newPersonal[0].resumeId :'')
+  },[location.state])
+   
 
 
+  useEffect(()=>{
+    if(user){
+    setEmail(user.email)
+    }
+  },[])
+
+  useEffect(()=>{
+    setResumeId(!newPersonal ? Math.floor(100000 + Math.random() * 900000) : newPersonal[0].resumeId)
+  },[location.state])
+    
+  
   // Certifcate Code
-  function handleCertificateDelete(index) {
+  function handleCertificateDelete(index,id) {
+    setDeleteSpecific([...deleteSpecific,{certificate:id}])
     const newData = [...certificate];
     newData.splice(index, 1);
     setCertificate(newData);
@@ -42,18 +84,27 @@ const PDFGenerator = () => {
   const handleCertificateChange = (index, field, value) => {
     const newCert = [...certificate];
     newCert[index][field] = value;
-    setCertificate(newCert);
+    const newArray = newCert.map((item) => {
+      return {
+        ...item,
+        email: email,
+        resumeId:resumeId,
+      }
+    })
+    setCertificate(newArray);
   }
 
   const handleCertificateField = () => {
     setCertificate([...certificate, {}]);
   }
+  
 
   //------------ends----------
 
   //Project Code
 
-  function handleProjectDelete(index) {
+  function handleProjectDelete(index,id) {
+    setDeleteSpecific([...deleteSpecific,{projects:id}])
     const newData = [...projects]
     newData.splice(index, 1);
     setProjects(newData);
@@ -62,7 +113,14 @@ const PDFGenerator = () => {
   const handleProjectChange = (index, field, value) => {
     const newProject = [...projects]
     newProject[index][field] = value
-    setProjects(newProject);
+    const newArray = projects.map((item) => {
+      return {
+        ...item,
+        email: email,
+        resumeId:resumeId,
+      }
+    })
+    setProjects(newArray);
   }
 
   const handleProjectField = () => {
@@ -72,19 +130,26 @@ const PDFGenerator = () => {
 
   //Skills Code
 
-  function handleSkillDelete(index) {
+  function handleSkillDelete(index,id) {
+    setDeleteSpecific([...deleteSpecific,{skills:id}])
     const updatedData = [...skills];
     updatedData.splice(index, 1)
     setSkills(updatedData)
   }
 
   const handleSkillChange = (index, field, value) => {
-    console.log(field)
+
     const newSkill = [...skills];
     newSkill[index][field] = value;
-    setSkills(newSkill);
+    const newArray = newSkill.map((item) => {
+      return {
+        ...item,
+        email: email,
+        resumeId:resumeId
+      }
+    })
+    setSkills(newArray);
   };
-  console.log(skills)
   const handleSkillFields = () => {
     setSkills([...skills, {}]);
   };
@@ -92,21 +157,33 @@ const PDFGenerator = () => {
   //---------------------ends-------------------
 
   // Education Code starts here
-  function handleEducationDelete(index) {
+  function handleEducationDelete(index, id) {
+    setDeleteSpecific([...deleteSpecific, {education:id}])
     const updatedData = [...educationFields];
     updatedData.splice(index, 1)
     setEducationFields(updatedData)
     setTimeout(scrollUp, 100)
   }
-
+  console.log(deleteSpecific)
   const handleInputChange = (index, field, value) => {
 
     const newEducationFields = [...educationFields];
     newEducationFields[index][field] = value;
-    setEducationFields(newEducationFields);
+
+    const newArray = newEducationFields.map((item) => {
+
+      return {
+        ...item,
+        email: email,
+        resumeId: resumeId,
+      }
+
+    })
+
+    setEducationFields(newArray);
 
   };
-  console.log(educationFields)
+  
   const handleAddFields = () => {
     setEducationFields([...educationFields, {}]);
     setTimeout(scrollDown, 100);
@@ -116,7 +193,8 @@ const PDFGenerator = () => {
 
   // Experience Code Starts Here
 
-  function handleExperienceDelete(index) {
+  function handleExperienceDelete(index,id) {
+    setDeleteSpecific([...deleteSpecific,{experience:id}])
     const updatedData = [...experience];
     updatedData.splice(index, 1)
     setExperience(updatedData)
@@ -126,7 +204,14 @@ const PDFGenerator = () => {
   const handleExperienceChange = (index, field, value) => {
     const newExperience = [...experience];
     newExperience[index][field] = value;
-    setExperience(newExperience);
+    const newArray = newExperience.map((item) => {
+      return {
+        ...item,
+        email: email,
+        resumeId:resumeId,
+      }
+    })
+    setExperience(newArray);
   };
 
   const handleAddFieldsExperience = () => {
@@ -134,8 +219,6 @@ const PDFGenerator = () => {
     setTimeout(scrollDown, 100);
   };
   //---------------------ends---------------------
-
-
 
   const styles = StyleSheet.create({
     page: {
@@ -235,6 +318,111 @@ const PDFGenerator = () => {
     }
   }
 
+  const saveEducation = async () => {
+    const response = await fetch('http://localhost:8080/add-education', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(educationFields)
+
+    })
+  }
+
+
+  const saveExperience = async () => {
+    const response = await fetch('http://localhost:8080/add-experience', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(experience)
+
+    })
+  }
+
+  const saveProjects = async () => {
+    const response = await fetch('http://localhost:8080/add-projects', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(projects)
+
+    })
+  }
+
+  const saveSkills = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/add-skills', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(skills)
+
+      })
+      if (response.ok) {
+        const responseData = await response.json();
+        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const saveCertificate = async () => {
+    const response = await fetch('http://localhost:8080/add-certificate', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(certificate)
+
+    })
+  }
+
+  
+  const savePersonalDetails = async () => {
+    const personalData = {
+      email: email,
+      useremail: userEmail,
+      phone: phone,
+      name: name,
+      summary: summary,
+      resumeId:resumeId
+    }
+    const response = await fetch('http://localhost:8080/add-personalInfo', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(personalData)
+
+    })
+  }
+  
+  const savePDF = async () => {
+    
+    if(email){
+      
+    try {
+      await savePersonalDetails();
+      await saveEducation();
+      await saveExperience();
+      await saveProjects();
+      await saveSkills();
+      await saveCertificate();
+
+      alert("PDF saved Successfully")
+    } catch (error) {
+      alert(error);
+    }
+  } else {
+    alert("You must login in to save Your Resume");
+  }
+  }
+  
   //-------------ends---------------
 
   // Main Resume PDF Template
@@ -243,26 +431,26 @@ const PDFGenerator = () => {
       <Page size="A4" style={styles.page}>
         {name.length > 0 && (
           <View >
-            <Text style={{ textAlign: 'center', borderBottom: '2px solid black', fontFamily: 'Helvetica-Bold' }}>{name}</Text>
+            <Text style={{ textAlign: 'center',  fontFamily: 'Helvetica-Bold' }}>{name}</Text>
           </View>
         )}
 
         {phone.length > 0 && (
           <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', border: '1px solid black' }}>
-            <Text style={styles.contact}>{phone}</Text><Text style={styles.contact}>{email}</Text>
+            <Text style={styles.contact}>{phone}</Text><Text style={styles.contact}>{userEmail}</Text>
           </View>
         )}
 
         {summary.length > 0 && (
           <View>
-            <Text className="section-heading" style={{ fontSize: '20px', marginTop: '5px', border: '3px solid black', paddingTop: '5px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>SUMMARY</Text>
+            <Text className="section-heading" style={{ fontSize: '15px', marginTop: '5px', border: '3px solid black', paddingTop: '5px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>SUMMARY</Text>
             <Text style={{ fontSize: '12px', paddingTop: '5px', paddingLeft: '5px', border: '1px solid black' }}>{summary}</Text>
           </View>)}
 
         {educationFields.length > 0 && (
           <View>
             <View style={{ border: '3px solid black', marginTop: '5px' }}>
-              <Text className="section-heading" style={{ fontSize: '20px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>EDUCATION</Text>
+              <Text className="section-heading" style={{ fontSize: '15px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>EDUCATION</Text>
             </View>
 
             <View style={{ display: 'flex', fontFamily: 'Helvetica-Bold', marginTop: '5px', flexDirection: 'row', fontWeight: 'bold' }}>
@@ -306,13 +494,13 @@ const PDFGenerator = () => {
 
         {experience.length > 0 && (
           <View>
-            <View style={{ border: '3px solid black', marginTop: '5px' }}>
-              <Text className="section-heading" style={{ fontSize: '20px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>EXPERIENCE</Text>
+            <View style={{ borderLeft: '3px solid black',borderBottom: '3px solid black',borderRight: '3px solid black',borderTop: '3px solid black', marginTop: '5px' }}>
+              <Text className="section-heading" style={{ fontSize: '15px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>EXPERIENCE</Text>
             </View>
           </View>
         )}
         {experience.map((item, index) => (
-          <View className="main" style={{ display: 'flex', paddingTop: '5px', paddingLeft: '3px', flexDirection: 'row', justifyContent: 'space-evenly', border: '1px solid black' }}>
+          <View className="main" style={{ display: 'flex', paddingTop: '5px', paddingLeft: '3px', flexDirection: 'row', justifyContent: 'space-evenly', borderLeft: '1px solid black',borderRight: '1px solid black',borderBottom: '1px solid black' }}>
             <Text style={{ fontSize: '10px', flex: 0.05 }}>{index + 1}.</Text>
             <View className="duration" style={{ display: 'flex', flex: 0.25, flexDirection: 'row', fontSize: '10px', paddingRight: '3px' }} >
               <Text>{item.start} - </Text>
@@ -330,7 +518,7 @@ const PDFGenerator = () => {
         <View>
           {skills.length > 0 && (
             <View style={{ border: '3px solid black', marginTop: '5px' }}>
-              <Text style={{ fontSize: '20px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>SKILLS</Text>
+              <Text style={{ fontSize: '15px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>SKILLS</Text>
             </View>)
           }
           <View style={[styles.skills, { borderLeft: '1px solid black', fontSize: '12px', borderRight: '1px solid black', display: 'flex', flexDirection: 'row' }]}>
@@ -342,7 +530,7 @@ const PDFGenerator = () => {
         </View>
         {projects.length > 0 && (
           <View style={{ border: '3px solid black', marginTop: '5px' }}>
-            <Text className="section-heading" style={{ fontSize: '20px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>PROJECTS</Text>
+            <Text className="section-heading" style={{ fontSize: '15px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>PROJECTS</Text>
           </View>
         )}
 
@@ -355,7 +543,7 @@ const PDFGenerator = () => {
           </View>
         ))}
         {certificate.length > 0 && <View style={{ border: '3px solid black', marginTop: '5px' }}>
-          <Text className="section-heading" style={{ fontSize: '20px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>CERTIFICATIONS</Text>
+          <Text className="section-heading" style={{ fontSize: '15px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>CERTIFICATIONS</Text>
         </View>}
         <View style={{ borderBottom: '1px solid black', borderLeft: '1px solid black', borderRight: '1px solid black' }}>
           {certificate.map((item, index) => (
@@ -365,165 +553,320 @@ const PDFGenerator = () => {
             </View>
           ))}
         </View>
-
       </Page>
     </Document>
   );
   //--------------------------ends---------------------
+  console.log(resumeId.length)
+  console.log(educationFields.length)
+  console.log(experience.length)
+  console.log(skills.length)
+  console.log(projects.length);
+  console.log(certificate.length)
+  
+  console.log(userEmail.length)
+  
+  // Update Functions
+  const updateEducation = async () => {
+    const response = await fetch('http://localhost:8080/update-education', {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(educationFields)
 
-  return (
-    <div className='main-wrapper'>
-      <div className='main-container'>
-        <div className='input' ref={input}>
+    })
+  }
 
-          <div className='personal-info'>
-            <label>PERSONAL INFORMATION</label>
-            <div style={{ display: 'flex', flex: 1 }}>
-              <div className='lables' style={{ flex: 0.3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                <p className='titles'>Fullname : </p>
-                <p className='titles'>Contact Number</p>
-                <p className='titles'>Email Address</p>
-              </div>
-              <div className='input-box' style={{ flex: 0.6, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                <input type="text" placeholder='Name' onChange={(event) => { setName(event.target.value) }} ></input>
-                <input type='number' placeholder='Phone Number' onChange={(event) => setPhone(event.target.value)}></input>
-                <input type='email' placeholder='Email' onChange={(event) => setEmail(event.target.value)}></input>
+  const updateExperience = async () => {
+    const response = await fetch('http://localhost:8080/update-experience', {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(experience)
+
+    })
+  }
+
+  const updateSkills = async () => {
+    const response = await fetch('http://localhost:8080/update-skills', {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(skills)
+
+    })
+  }
+
+  const updateProjects = async () => {
+    const response = await fetch('http://localhost:8080/update-projects', {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(projects)
+
+    })
+  }
+
+  
+
+  const updatePersonal = async () => {
+    const personalUpdate = [{
+      id:newPersonal[0].id,
+      email: email,
+      useremail: userEmail,
+      phone: phone,
+      name: name,
+      summary: summary,
+      resumeId:resumeId
+    }]
+    const response = await fetch('http://localhost:8080/update-personal', {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(personalUpdate)
+
+    })
+  }
+
+  const updateCertificate = async () => {
+    const response = await fetch('http://localhost:8080/update-certificate', {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(certificate)
+
+    })
+  }
+
+  const deleteFields = async()=>{
+    const response = await fetch('http://localhost:8080/delete-fields', {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(deleteSpecific)
+
+    })
+  }
+  //----------------ends-------------------
+
+
+  const updatePDF=async()=>{
+    try{
+   await updateCertificate()
+    await updateEducation()
+   await  updateExperience()
+    await updatePersonal()
+    await updateSkills()
+    await updateProjects()
+
+    await deleteFields();
+
+    alert("Resume Successfully Updated");
+
+
+    } catch(error){
+      console.log("Update Error"+error)
+    }
+  }
+  
+
+  if(loading){
+    return <div style={{height:'100vh', textAlign:'center'}}>Loading</div>
+  } else
+    return (
+      <div className='main-wrapper'>
+        <div className='main-container'>
+          <div className='input' ref={input}>
+
+            <div className='personal-info'>
+              <label>PERSONAL INFORMATION</label>
+              <div style={{ display: 'flex', flex: 1 }}>
+                <div className='lables' style={{ flex: 0.3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                  <p className='titles'>Fullname : </p>
+                  <p className='titles'>Contact Number</p>
+                  <p className='titles'>Email Address</p>
+                </div>
+                <div className='input-box' style={{ flex: 0.6, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                  <input type="text" value={name} placeholder='Name' onChange={(event) => { setName(event.target.value) }} ></input>
+                  <input type='number' value={phone} placeholder='Phone Number' onChange={(event) => setPhone(event.target.value)}></input>
+                  <input type='email' value={userEmail} placeholder='Email' onChange={(event) => setUserEmail(event.target.value)}></input>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className='summary'>
-            <label >PROFESSIONAL SUMMARY</label>
-            <div className='p-summary'>
-              <p className='titles' style={{ paddingLeft: '5px', paddingRight: '5px' }}>Summary</p>
-              <textarea placeholder='Professional Summary' name="summary" onChange={(event) => setSummary(event.target.value)} rows="4" cols="50"></textarea>
-            </div>
-          </div>
-
-          <div className='education'>
-
-            {educationFields.map((_, index) => (
-              <div className='edu-wrapper'>
-                <div id='edu'>EDUCATION {index + 1}</div>
-                {/* <button id="edu-delete-btn" onClick={()=>handleEducationDelete(index)}>Delete</button> */}
-                <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={() => handleEducationDelete(index)} />
-                <EducationFields
-                  key={index}
-                  onChange={(event) =>
-                    handleInputChange(index, event.target.name, event.target.value)
-
-                  }
-
-                />
+            <div className='summary'>
+              <label >PROFESSIONAL SUMMARY</label>
+              <div className='p-summary'>
+                <p className='titles' style={{ paddingLeft: '5px', paddingRight: '5px' }}>Summary</p>
+                <textarea value={summary} placeholder='Professional Summary' name="summary" onChange={(event) => setSummary(event.target.value)} rows="4" cols="50"></textarea>
               </div>
-            ))}
-            <div className='generator'>
-              <button onClick={handleAddFields}><AddOutlinedIcon />Add Education</button>
             </div>
-          </div>
 
-          <div className='experience'>
-            {experience.map((_, index) => (
-              <div className='edu-wrapper'>
-                <div id='edu'>WORK EXPERIENCE {index + 1}</div>
-                <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={handleExperienceDelete} />
-                <br></br>
-                <Experience
-                  key={index}
-                  onChange={(event) =>
-                    handleExperienceChange(index, event.target.name, event.target.value)
-                  }
-                />
+            <div className='education'>
+
+              {
+               
+                  educationFields.map((_, index) => (
+                    <div className='edu-wrapper' key={index}>
+                      <div id='edu'>EDUCATION {index + 1}</div>
+                      <div style={{ width: '45px', height: '45px', float: 'right', paddingBottom: '10px' }}>
+                        <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={() => handleEducationDelete(index,educationFields[index].id)} />
+                      </div>
+                      <br></br>
+                      <EducationFields
+                        style={{ marginTop: '10px' }}
+                        key={index}
+                        start={educationFields[index].start}
+                        end={educationFields[index].end}
+                        institute={educationFields[index].institute}
+                        course={educationFields[index].course}
+                        score={educationFields[index].score}
+                        onChange={(event) =>
+                          handleInputChange(index, event.target.name, event.target.value)
+                        }
+                      />
+                    </div>
+                  ))
+                
+              }
+
+              <div className='generator'>
+                <button onClick={handleAddFields}><AddOutlinedIcon />Add Education</button>
               </div>
-            ))}
-            <div className='generator'>
-              <button onClick={handleAddFieldsExperience}><AddOutlinedIcon />Add Experience</button>
             </div>
-          </div>
 
-
-          <div className='skills_section'>
-            {skills.length > 0 && <div style={{ marginBottom: '20px' }} id='edu'>SKILLS</div>}
-            <div className='skill-render'>
-
-              {skills.map((_, index) => (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <label>{index + 1}.</label>
-                  <Skills key={index} onChange={(event) => handleSkillChange(index, event.target.name, event.target.value)} />
-                  <DeleteForeverRoundedIcon onClick={() => handleSkillDelete(index)} id="skill-del" />
+            <div className='experience'>
+              {experience.map((_, index) => (
+                <div className='edu-wrapper'>
+                  <div id='edu'>WORK EXPERIENCE {index + 1}</div>
+                  <div style={{ width: '40px', height: '40px', float: 'right' }}>
+                    <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={()=>{handleExperienceDelete(index,experience[index].id)}} />
+                  </div>
+                  <br></br>
+                  <Experience
+                    key={index}
+                    onChange={(event) =>
+                      handleExperienceChange(index, event.target.name, event.target.value)
+                    }
+                    start={experience[index].start}
+                    end={experience[index].end}
+                    company={experience[index].company}
+                    position={experience[index].position}
+                    description={experience[index].description}
+                  />
                 </div>
               ))}
-            </div>
-            <div className='generator'>
-              <button onClick={handleSkillFields}><AddOutlinedIcon />Add Skills</button>
-
-            </div>
-          </div>
-
-          <div className='projects'>
-
-            {projects.map((_, index) => (
-              <div className='edu-wrapper'>
-                <div id='edu'>PROJECTS {index + 1}</div>
-                <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={handleProjectDelete} />
-                <Projects key={index} onChange={(event) => handleProjectChange(index, event.target.name, event.target.value)} />
+              <div className='generator'>
+                <button onClick={handleAddFieldsExperience}><AddOutlinedIcon />Add Experience</button>
               </div>
-            ))}
-            <div className='generator'>
-
-              <button onClick={handleProjectField}><AddOutlinedIcon />Add Projects</button>
             </div>
-          </div>
 
-          <div className='certificate'>
-            {certificate.length > 0 && <div style={{ marginBottom: '20px' }} id='edu'>CERTIFICATIONS</div>}
-            {certificate.map((_, index) => (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <label>{index + 1}.</label>
-                  <Certifications key={index} onChange={(event) => handleCertificateChange(index, event.target.name, event.target.value)} />
+
+            <div className='skills_section'>
+              {skills.length > 0 && <div style={{ marginBottom: '20px' }} id='edu'>SKILLS</div>}
+              <div className='skill-render'>
+
+                {skills.map((_, index) => (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <label>{index + 1}.</label>
+
+                    <Skills skills={skills[index].skills} key={index} onChange={(event) => handleSkillChange(index, event.target.name, event.target.value)} />
+
+                    <div style={{ height: '40px', width: '40px', display: 'flex', alignItems: 'center' }}>
+                      <DeleteForeverRoundedIcon onClick={() => handleSkillDelete(index, skills[index].id)} id="skill-del" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className='generator'>
+                <button onClick={handleSkillFields}><AddOutlinedIcon />Add Skills</button>
+
+              </div>
+            </div>
+
+            <div className='projects'>
+
+              {projects.map((_, index) => (
+                <div className='edu-wrapper'>
+                  <div id='edu'>PROJECTS {index + 1}</div>
+                  <div style={{ width: '40px', height: '40px', float: 'right' }}>
+                    <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={()=> handleProjectDelete(index,projects[index].id)} />
+                  </div>
+                  <Projects 
+                  projectName={projects[index].project_name}
+                  projectDescription={projects[index].project_description}
+                   key={index} onChange={(event) => handleProjectChange(index, event.target.name, event.target.value)} />
                 </div>
-                <DeleteForeverRoundedIcon onClick={() => handleCertificateDelete(index)} id="skill-del" />
+              ))}
+              <div className='generator'>
+
+                <button onClick={handleProjectField}><AddOutlinedIcon />Add Projects</button>
               </div>
-            ))}
-            <div className='generator'>
-              <button onClick={handleCertificateField}><AddOutlinedIcon />Add Certifications</button>
             </div>
+
+            <div className='certificate'>
+              {certificate.length > 0 && <div style={{ marginBottom: '20px' }} id='edu'>CERTIFICATIONS</div>}
+              {certificate.map((_, index) => (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <label>{index + 1}.</label>
+                    <Certifications certificate={certificate[index].certificate} key={index} onChange={(event) => handleCertificateChange(index, event.target.name, event.target.value)} />
+                  </div>
+                  <div style={{ height: '40px', width: '40px', display: 'flex', alignItems: 'center' }}>
+                    <DeleteForeverRoundedIcon onClick={() => handleCertificateDelete(index,certificate[index].id)} id="skill-del" />
+                  </div>
+                </div>
+              ))}
+              <div className='generator'>
+                <button onClick={handleCertificateField}><AddOutlinedIcon />Add Certifications</button>
+              </div>
+            </div>
+            
+          </div>
+
+          <div className='pdf-viewer'>
+            {preview ? (
+              <div className='pdf-container'>
+                <PDFViewer className='pdf'>
+                  {content}
+                </PDFViewer>
+              </div>
+            ) : (
+              <div className='tips'>
+                <h1>TIPS </h1>
+                <ol className='tips-content'>
+                  <div>1. Reread the job advertisement. Make a note of keywords and keyword phrases the company included in the job description and use these to highlight your skills in the resume. These skills should be relevant to the job you’re applying for.</div>
+                  <div>2. State your contact information. Put your name, address, email, and phone number in the top section of the resume.</div>
+                  <div>3. Write a concise personal statement. It should state who you are, why you are motivated to be in your profession, what your professional goals are, and any awards or recognition you won in school.</div>
+                  <div>4. List your soft and hard skills. Review which skills can help you do better at the job and include only those. For instance, you can highlight your communication, interpersonal, and conflict management skills for a customer service role. If it is a technical position, you can mention your mastery of coding and different programming languages. If you are good at writing, planning, and organizing, include that.</div>
+                  <div>5. Declare your willingness to learn new skills. Emerging technologies are changing the way companies do business, and that’s why employers are increasingly on the lookout for candidates who are willing to learn new skills and are fast learners. Highlighting these aspects can draw the attention of recruiters.</div>
+                  <div>6. Give work experience details. Even if you don’t have much professional experience, you can mention any projects done on your own or in collaboration with others. If you interned with any company or worked part-time at a fast-food restaurant or mall store, it can be useful to include that.</div>
+                  <div>7. Look at other resume samples online. Find the ones from your industry and compare them with your resume. Check if there is room for improvement and if you can add any items to make your resume stand out.</div>
+                </ol>
+              </div>
+            )}
           </div>
         </div>
-
-        <div className='pdf-viewer'>
-          {preview ? (
-            <div className='pdf-container'>
-              <PDFViewer className='pdf'>
-                {content}
-              </PDFViewer>
-            </div>
-          ) : (
-            <div className='tips'>
-              <h1>TIPS </h1>
-              <ol className='tips-content'>
-                <div>1. Reread the job advertisement. Make a note of keywords and keyword phrases the company included in the job description and use these to highlight your skills in the resume. These skills should be relevant to the job you’re applying for.</div>
-                <div>2. State your contact information. Put your name, address, email, and phone number in the top section of the resume.</div>
-                <div>3. Write a concise personal statement. It should state who you are, why you are motivated to be in your profession, what your professional goals are, and any awards or recognition you won in school.</div>
-                <div>4. List your soft and hard skills. Review which skills can help you do better at the job and include only those. For instance, you can highlight your communication, interpersonal, and conflict management skills for a customer service role. If it is a technical position, you can mention your mastery of coding and different programming languages. If you are good at writing, planning, and organizing, include that.</div>
-                <div>5. Declare your willingness to learn new skills. Emerging technologies are changing the way companies do business, and that’s why employers are increasingly on the lookout for candidates who are willing to learn new skills and are fast learners. Highlighting these aspects can draw the attention of recruiters.</div>
-                <div>6. Give work experience details. Even if you don’t have much professional experience, you can mention any projects done on your own or in collaboration with others. If you interned with any company or worked part-time at a fast-food restaurant or mall store, it can be useful to include that.</div>
-                <div>7. Look at other resume samples online. Find the ones from your industry and compare them with your resume. Check if there is room for improvement and if you can add any items to make your resume stand out.</div>
-              </ol>
-
-            </div>
-          )}
+        <div className='pdf-generator-footer' >
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button class="prev-btn" onClick={PDFPreview} >{preview ? `Hide Preview` : `Resume Preview`}</button>
+          </div>
+          <div style={{ flex: 1, color: 'red', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+           { !location.state ? (
+            <button class="prev-btn" onClick={savePDF}>Save</button>
+           ) :( <button class="prev-btn" onClick={updatePDF}>Update</button>)
+           }
+          </div>
         </div>
       </div>
-      <div className='pdf-generator-footer' >
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <button class="prev-btn" onClick={PDFPreview} >{preview ? `Hide Preview` : `Resume Preview`}</button>
-        </div>
-        <div style={{ flex: 1, color: 'red' }}></div>
-      </div>
-    </div>
-  )
+    )
 }
 
-export default PDFGenerator
+// export default PDFGenerator

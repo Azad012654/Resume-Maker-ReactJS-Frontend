@@ -1,10 +1,11 @@
-$color: #0cf;
+// $color: #0cf;
+$color:rgb(16, 13, 11);
 
 .button {
 	display: inline-block;
 	padding: .75rem 1.25rem;
 	border-radius: 10rem;
-	color: #070707;
+	color: white;
     font-weight: bold;
     font-family:monospace;
 	// text-transform: uppercase;
@@ -12,7 +13,7 @@ $color: #0cf;
 	transition: all .3s;
 	position: relative;
 	overflow: hidden;
-	z-index: 1;
+	z-index: 2;
 	&:after {
 		content: '';
 		position: absolute;
@@ -20,7 +21,10 @@ $color: #0cf;
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: $color;
+		// background-color: $color;
+		background: rgb(86,100,102);
+		background: linear-gradient(196deg, rgba(86,100,102,1) 0%, rgba(10,12,22,1) 47%, rgba(8,122,165,1) 100%);
+	
 		border-radius: 10rem;
 		z-index: -2;
 	}
@@ -37,10 +41,15 @@ $color: #0cf;
 		z-index: -1;
 	}
 	&:hover {
-		color: #fff;
+		color: #ffffff;
 		&:before {
 			width: 100%;
 		}
+	}
+}
+@media screen and (max-width:768px) {
+	.button{
+		width:140px;
 	}
 }
 
@@ -66,10 +75,10 @@ span {
   display: block;
   margin-top: 2rem;
   font-size: .7rem;
-  color: #777;
+  color: #020101;
   a {
     font-size: .7rem;
     color: #999;
-    text-decoration: underline;
+    // text-decoration: underline;
   }
 }
