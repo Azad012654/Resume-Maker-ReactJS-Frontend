@@ -60,7 +60,11 @@ const Dashboard = () => {
   useEffect(() => {
     try {
       const fetchEducation = async () => {
+<<<<<<< HEAD
         await fetch(`http://localhost:8080/get-education/${loggedUser}`)
+=======
+        await fetch(`https://resume-builder-fatj.onrender.com/get-education/${encodeURIComponent(loggedUser)}`)
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
           .then((response) => {
             return response.json();
           }).then((data) => {
@@ -69,7 +73,11 @@ const Dashboard = () => {
       }
 
       const fetchExperience = async () => {
+<<<<<<< HEAD
         await fetch(`http://localhost:8080/get-experience/${loggedUser}`)
+=======
+        await fetch(`https://resume-builder-fatj.onrender.com/get-experience/${encodeURIComponent(loggedUser)}`)
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
           .then((experience_response) => {
             return experience_response.json();
           }).then((data) => {
@@ -80,7 +88,11 @@ const Dashboard = () => {
       }
       
       const fetchProjects = async () => {
+<<<<<<< HEAD
         await fetch(`http://localhost:8080/get-projects/${loggedUser}`)
+=======
+        await fetch(`https://resume-builder-fatj.onrender.com/get-projects/${encodeURIComponent(loggedUser)}`)
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -89,7 +101,11 @@ const Dashboard = () => {
       }
 
       const fetchCertificate = async () => {
+<<<<<<< HEAD
         await fetch(`http://localhost:8080/get-certificate/${loggedUser}`)
+=======
+        await fetch(`https://resume-builder-fatj.onrender.com/get-certificate/${encodeURIComponent(loggedUser)}`)
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -98,7 +114,11 @@ const Dashboard = () => {
       }
 
       const fetchSkills = async () => {
+<<<<<<< HEAD
         await fetch(`http://localhost:8080/get-skills/${loggedUser}`)
+=======
+        await fetch('https://resume-builder-fatj.onrender.com/get-skills/')
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -107,7 +127,11 @@ const Dashboard = () => {
       }
 
       const fetchPersonalData = async () => {
+<<<<<<< HEAD
         await fetch(`http://localhost:8080/get-personal/${loggedUser}`)
+=======
+        await fetch(`https://resume-builder-fatj.onrender.com/get-personal/${encodeURIComponent(loggedUser)}`)
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -192,7 +216,11 @@ const Dashboard = () => {
 
   const deleteResume = async (resumeId) => {
 
+<<<<<<< HEAD
    await fetch(`http://localhost:8080/delete-resume/${resumeId}`, {
+=======
+   await fetch(`https://resume-builder-fatj.onrender.com/delete-resume/${encodeURIComponent(resumeId)}`, {
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
       method: 'delete'
     }).then((response) => {
       if(response.ok){
@@ -205,7 +233,11 @@ const Dashboard = () => {
   }
   console.log(personalData)
   //----------------ends----------------------
+<<<<<<< HEAD
   if (isLoading) {
+=======
+  if (education.length<0) {
+>>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
     return (
       <div className='container'>
         <div className='loader'>
