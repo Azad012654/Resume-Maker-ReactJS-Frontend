@@ -12,8 +12,36 @@ import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../Utills/Firebase'
 import { useLocation } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { FcGoogle } from 'react-icons/fc';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+
 
 export const PDFGenerator = () => {
+  const googleProvider = new GoogleAuthProvider;
+  const [email, setEmail] = useState(""); // Google Logged in User
+  const [user, loading] = useAuthState(auth);
+  const [saveMessage, setSaveMessage] = useState("")
+  const [ResumeName,setResumeName]=useState("");
+
+  const navigate = useNavigate();
+
+  const googleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider).then(() => { navigate('/pdf-generator'); setEmail(user.email); handleClose(); })
+
+        // setEmail()
+        .catch(() => alert("Login Failed"));
+      console.log(result)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const location = useLocation();
   const {
     newEducation,
@@ -23,11 +51,11 @@ export const PDFGenerator = () => {
     newCertification,
     newPersonal,
   } = location.state || {};
-   
-  const [user, loading] = useAuthState(auth);
+
+
   const [name, setName] = useState("");
   const [educationFields, setEducationFields] = useState([]);
-  
+
   const [experience, setExperience] = useState([]);
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -37,11 +65,19 @@ export const PDFGenerator = () => {
   const [summary, setSummary] = useState("");
   const input = useRef(null);
   const [preview, setPreview] = useState(false);
-  const [email, setEmail] = useState("");
-  const [resumeId,setResumeId]=useState("");
-  const [deleteSpecific,setDeleteSpecific]=useState([]);
 
-  useEffect(()=>{
+  const [resumeId, setResumeId] = useState("");
+  const [deleteSpecific, setDeleteSpecific] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+
+
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () =>{ setOpen2(false);setSaveMessage(""); };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  useEffect(() => {
     // if(!location.state){
     //   setEducationFields(newEducation);
     //   setExperience(newExperience)
@@ -50,33 +86,33 @@ export const PDFGenerator = () => {
     //   setSkills(newSkill)
     // }
     setEducationFields(newEducation ? newEducation : [])
-    setExperience(newExperience ? newExperience: [])
-    setSkills(newSkill ? newSkill :[])
+    setExperience(newExperience ? newExperience : [])
+    setSkills(newSkill ? newSkill : [])
     setProjects(newProjects ? newProjects : [])
     setCertificate(newCertification ? newCertification : [])
     setName(newPersonal ? newPersonal[0].name : "")
     setUserEmail(newPersonal ? newPersonal[0].useremail : "")
-    setSummary(newPersonal ? newPersonal[0].summary :'')
+    setSummary(newPersonal ? newPersonal[0].summary : '')
     setPhone(newPersonal ? newPersonal[0].phone : '')
-    setResumeId(newPersonal ? newPersonal[0].resumeId :'')
-  },[location.state])
-   
+    setResumeId(newPersonal ? newPersonal[0].resumeId : '')
+  }, [location.state])
 
 
-  useEffect(()=>{
-    if(user){
-    setEmail(user.email)
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email)
     }
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setResumeId(!newPersonal ? Math.floor(100000 + Math.random() * 900000) : newPersonal[0].resumeId)
-  },[location.state])
-    
-  
+  }, [location.state])
+
+
   // Certifcate Code
-  function handleCertificateDelete(index,id) {
-    setDeleteSpecific([...deleteSpecific,{certificate:id}])
+  function handleCertificateDelete(index, id) {
+    setDeleteSpecific([...deleteSpecific, { certificate: id }])
     const newData = [...certificate];
     newData.splice(index, 1);
     setCertificate(newData);
@@ -88,7 +124,7 @@ export const PDFGenerator = () => {
       return {
         ...item,
         email: email,
-        resumeId:resumeId,
+        resumeId: resumeId,
       }
     })
     setCertificate(newArray);
@@ -97,14 +133,14 @@ export const PDFGenerator = () => {
   const handleCertificateField = () => {
     setCertificate([...certificate, {}]);
   }
-  
+
 
   //------------ends----------
 
   //Project Code
 
-  function handleProjectDelete(index,id) {
-    setDeleteSpecific([...deleteSpecific,{projects:id}])
+  function handleProjectDelete(index, id) {
+    setDeleteSpecific([...deleteSpecific, { projects: id }])
     const newData = [...projects]
     newData.splice(index, 1);
     setProjects(newData);
@@ -117,7 +153,7 @@ export const PDFGenerator = () => {
       return {
         ...item,
         email: email,
-        resumeId:resumeId,
+        resumeId: resumeId,
       }
     })
     setProjects(newArray);
@@ -130,8 +166,8 @@ export const PDFGenerator = () => {
 
   //Skills Code
 
-  function handleSkillDelete(index,id) {
-    setDeleteSpecific([...deleteSpecific,{skills:id}])
+  function handleSkillDelete(index, id) {
+    setDeleteSpecific([...deleteSpecific, { skills: id }])
     const updatedData = [...skills];
     updatedData.splice(index, 1)
     setSkills(updatedData)
@@ -145,7 +181,7 @@ export const PDFGenerator = () => {
       return {
         ...item,
         email: email,
-        resumeId:resumeId
+        resumeId: resumeId
       }
     })
     setSkills(newArray);
@@ -158,7 +194,7 @@ export const PDFGenerator = () => {
 
   // Education Code starts here
   function handleEducationDelete(index, id) {
-    setDeleteSpecific([...deleteSpecific, {education:id}])
+    setDeleteSpecific([...deleteSpecific, { education: id }])
     const updatedData = [...educationFields];
     updatedData.splice(index, 1)
     setEducationFields(updatedData)
@@ -183,7 +219,7 @@ export const PDFGenerator = () => {
     setEducationFields(newArray);
 
   };
-  
+
   const handleAddFields = () => {
     setEducationFields([...educationFields, {}]);
     setTimeout(scrollDown, 100);
@@ -193,8 +229,8 @@ export const PDFGenerator = () => {
 
   // Experience Code Starts Here
 
-  function handleExperienceDelete(index,id) {
-    setDeleteSpecific([...deleteSpecific,{experience:id}])
+  function handleExperienceDelete(index, id) {
+    setDeleteSpecific([...deleteSpecific, { experience: id }])
     const updatedData = [...experience];
     updatedData.splice(index, 1)
     setExperience(updatedData)
@@ -208,7 +244,7 @@ export const PDFGenerator = () => {
       return {
         ...item,
         email: email,
-        resumeId:resumeId,
+        resumeId: resumeId,
       }
     })
     setExperience(newArray);
@@ -220,6 +256,19 @@ export const PDFGenerator = () => {
   };
   //---------------------ends---------------------
 
+  //Modal Style 
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+  //----------------ends---------------------------
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'column',
@@ -364,7 +413,7 @@ export const PDFGenerator = () => {
       })
       if (response.ok) {
         const responseData = await response.json();
-        
+
       }
     } catch (error) {
       console.log(error);
@@ -382,7 +431,7 @@ export const PDFGenerator = () => {
     })
   }
 
-  
+
   const savePersonalDetails = async () => {
     const personalData = {
       email: email,
@@ -390,9 +439,11 @@ export const PDFGenerator = () => {
       phone: phone,
       name: name,
       summary: summary,
-      resumeId:resumeId
+      resumeId: resumeId,
+      resumename : ResumeName,
     }
-    const response = await fetch('http://localhost:8080/add-personalInfo', {
+    console.log(personalData)
+    await fetch('http://localhost:8080/add-personalInfo', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -401,28 +452,31 @@ export const PDFGenerator = () => {
 
     })
   }
-  
-  const savePDF = async () => {
-    
-    if(email){
-      
-    try {
-      await savePersonalDetails();
-      await saveEducation();
-      await saveExperience();
-      await saveProjects();
-      await saveSkills();
-      await saveCertificate();
 
-      alert("PDF saved Successfully")
-    } catch (error) {
-      alert(error);
+  const savePDF = async () => {
+
+    if (email) {
+      setSaveMessage("Saving....")
+
+      try {
+        Promise.all([
+          await savePersonalDetails(),
+          await saveEducation(),
+          await saveExperience(),
+          await saveProjects(),
+          await saveSkills(),
+          await saveCertificate()
+        ]).then(() => { setSaveMessage("done") })
+
+      } catch (error) {
+        alert(error);
+      }
+
+    } else {
+      handleOpen()
     }
-  } else {
-    alert("You must login in to save Your Resume");
   }
-  }
-  
+  console.log(email)
   //-------------ends---------------
 
   // Main Resume PDF Template
@@ -431,7 +485,7 @@ export const PDFGenerator = () => {
       <Page size="A4" style={styles.page}>
         {name.length > 0 && (
           <View >
-            <Text style={{ textAlign: 'center',  fontFamily: 'Helvetica-Bold' }}>{name}</Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>{name}</Text>
           </View>
         )}
 
@@ -494,13 +548,13 @@ export const PDFGenerator = () => {
 
         {experience.length > 0 && (
           <View>
-            <View style={{ borderLeft: '3px solid black',borderBottom: '3px solid black',borderRight: '3px solid black',borderTop: '3px solid black', marginTop: '5px' }}>
+            <View style={{ borderLeft: '3px solid black', borderBottom: '3px solid black', borderRight: '3px solid black', borderTop: '3px solid black', marginTop: '5px' }}>
               <Text className="section-heading" style={{ fontSize: '15px', textAlign: 'center', fontFamily: 'Helvetica-Bold' }}>EXPERIENCE</Text>
             </View>
           </View>
         )}
         {experience.map((item, index) => (
-          <View className="main" style={{ display: 'flex', paddingTop: '5px', paddingLeft: '3px', flexDirection: 'row', justifyContent: 'space-evenly', borderLeft: '1px solid black',borderRight: '1px solid black',borderBottom: '1px solid black' }}>
+          <View className="main" style={{ display: 'flex', paddingTop: '5px', paddingLeft: '3px', flexDirection: 'row', justifyContent: 'space-evenly', borderLeft: '1px solid black', borderRight: '1px solid black', borderBottom: '1px solid black' }}>
             <Text style={{ fontSize: '10px', flex: 0.05 }}>{index + 1}.</Text>
             <View className="duration" style={{ display: 'flex', flex: 0.25, flexDirection: 'row', fontSize: '10px', paddingRight: '3px' }} >
               <Text>{item.start} - </Text>
@@ -557,18 +611,10 @@ export const PDFGenerator = () => {
     </Document>
   );
   //--------------------------ends---------------------
-  console.log(resumeId.length)
-  console.log(educationFields.length)
-  console.log(experience.length)
-  console.log(skills.length)
-  console.log(projects.length);
-  console.log(certificate.length)
-  
-  console.log(userEmail.length)
-  
+
   // Update Functions
   const updateEducation = async () => {
-    const response = await fetch('http://localhost:8080/update-education', {
+    await fetch('http://localhost:8080/update-education', {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -579,7 +625,7 @@ export const PDFGenerator = () => {
   }
 
   const updateExperience = async () => {
-    const response = await fetch('http://localhost:8080/update-experience', {
+    await fetch('http://localhost:8080/update-experience', {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -590,7 +636,7 @@ export const PDFGenerator = () => {
   }
 
   const updateSkills = async () => {
-    const response = await fetch('http://localhost:8080/update-skills', {
+    await fetch('http://localhost:8080/update-skills', {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -601,7 +647,7 @@ export const PDFGenerator = () => {
   }
 
   const updateProjects = async () => {
-    const response = await fetch('http://localhost:8080/update-projects', {
+    await fetch('http://localhost:8080/update-projects', {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -611,19 +657,19 @@ export const PDFGenerator = () => {
     })
   }
 
-  
+
 
   const updatePersonal = async () => {
     const personalUpdate = [{
-      id:newPersonal[0].id,
+      id: newPersonal[0].id,
       email: email,
       useremail: userEmail,
       phone: phone,
       name: name,
       summary: summary,
-      resumeId:resumeId
+      resumeId: resumeId
     }]
-    const response = await fetch('http://localhost:8080/update-personal', {
+    await fetch('http://localhost:8080/update-personal', {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -634,7 +680,7 @@ export const PDFGenerator = () => {
   }
 
   const updateCertificate = async () => {
-    const response = await fetch('http://localhost:8080/update-certificate', {
+    await fetch('http://localhost:8080/update-certificate', {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -644,8 +690,8 @@ export const PDFGenerator = () => {
     })
   }
 
-  const deleteFields = async()=>{
-    const response = await fetch('http://localhost:8080/delete-fields', {
+  const deleteFields = async () => {
+    await fetch('http://localhost:8080/delete-fields', {
       method: 'delete',
       headers: {
         'Content-Type': 'application/json'
@@ -657,28 +703,28 @@ export const PDFGenerator = () => {
   //----------------ends-------------------
 
 
-  const updatePDF=async()=>{
-    try{
-   await updateCertificate()
-    await updateEducation()
-   await  updateExperience()
-    await updatePersonal()
-    await updateSkills()
-    await updateProjects()
+  const updatePDF = async () => {
+    try {
+      await updateCertificate()
+      await updateEducation()
+      await updateExperience()
+      await updatePersonal()
+      await updateSkills()
+      await updateProjects()
 
-    await deleteFields();
+      await deleteFields();
 
-    alert("Resume Successfully Updated");
+      alert("Resume Successfully Updated");
 
 
-    } catch(error){
-      console.log("Update Error"+error)
+    } catch (error) {
+      console.log("Update Error" + error)
     }
   }
   
-
-  if(loading){
-    return <div style={{height:'100vh', textAlign:'center'}}>Loading</div>
+  
+  if (loading) {
+    return <div style={{ height: '100vh', textAlign: 'center' }}>Loading</div>
   } else
     return (
       <div className='main-wrapper'>
@@ -712,29 +758,29 @@ export const PDFGenerator = () => {
             <div className='education'>
 
               {
-               
-                  educationFields.map((_, index) => (
-                    <div className='edu-wrapper' key={index}>
-                      <div id='edu'>EDUCATION {index + 1}</div>
-                      <div style={{ width: '45px', height: '45px', float: 'right', paddingBottom: '10px' }}>
-                        <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={() => handleEducationDelete(index,educationFields[index].id)} />
-                      </div>
-                      <br></br>
-                      <EducationFields
-                        style={{ marginTop: '10px' }}
-                        key={index}
-                        start={educationFields[index].start}
-                        end={educationFields[index].end}
-                        institute={educationFields[index].institute}
-                        course={educationFields[index].course}
-                        score={educationFields[index].score}
-                        onChange={(event) =>
-                          handleInputChange(index, event.target.name, event.target.value)
-                        }
-                      />
+
+                educationFields.map((_, index) => (
+                  <div className='edu-wrapper' key={index}>
+                    <div id='edu'>EDUCATION {index + 1}</div>
+                    <div style={{ width: '45px', height: '45px', float: 'right', paddingBottom: '10px' }}>
+                      <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={() => handleEducationDelete(index, educationFields[index].id)} />
                     </div>
-                  ))
-                
+                    <br></br>
+                    <EducationFields
+                      style={{ marginTop: '10px' }}
+                      key={index}
+                      start={educationFields[index].start}
+                      end={educationFields[index].end}
+                      institute={educationFields[index].institute}
+                      course={educationFields[index].course}
+                      score={educationFields[index].score}
+                      onChange={(event) =>
+                        handleInputChange(index, event.target.name, event.target.value)
+                      }
+                    />
+                  </div>
+                ))
+
               }
 
               <div className='generator'>
@@ -747,7 +793,7 @@ export const PDFGenerator = () => {
                 <div className='edu-wrapper'>
                   <div id='edu'>WORK EXPERIENCE {index + 1}</div>
                   <div style={{ width: '40px', height: '40px', float: 'right' }}>
-                    <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={()=>{handleExperienceDelete(index,experience[index].id)}} />
+                    <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={() => { handleExperienceDelete(index, experience[index].id) }} />
                   </div>
                   <br></br>
                   <Experience
@@ -797,12 +843,12 @@ export const PDFGenerator = () => {
                 <div className='edu-wrapper'>
                   <div id='edu'>PROJECTS {index + 1}</div>
                   <div style={{ width: '40px', height: '40px', float: 'right' }}>
-                    <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={()=> handleProjectDelete(index,projects[index].id)} />
+                    <RemoveCircleRoundedIcon id="edu-delete-btn" onClick={() => handleProjectDelete(index, projects[index].id)} />
                   </div>
-                  <Projects 
-                  projectName={projects[index].project_name}
-                  projectDescription={projects[index].project_description}
-                   key={index} onChange={(event) => handleProjectChange(index, event.target.name, event.target.value)} />
+                  <Projects
+                    projectName={projects[index].project_name}
+                    projectDescription={projects[index].project_description}
+                    key={index} onChange={(event) => handleProjectChange(index, event.target.name, event.target.value)} />
                 </div>
               ))}
               <div className='generator'>
@@ -820,7 +866,7 @@ export const PDFGenerator = () => {
                     <Certifications certificate={certificate[index].certificate} key={index} onChange={(event) => handleCertificateChange(index, event.target.name, event.target.value)} />
                   </div>
                   <div style={{ height: '40px', width: '40px', display: 'flex', alignItems: 'center' }}>
-                    <DeleteForeverRoundedIcon onClick={() => handleCertificateDelete(index,certificate[index].id)} id="skill-del" />
+                    <DeleteForeverRoundedIcon onClick={() => handleCertificateDelete(index, certificate[index].id)} id="skill-del" />
                   </div>
                 </div>
               ))}
@@ -828,7 +874,7 @@ export const PDFGenerator = () => {
                 <button onClick={handleCertificateField}><AddOutlinedIcon />Add Certifications</button>
               </div>
             </div>
-            
+
           </div>
 
           <div className='pdf-viewer'>
@@ -859,12 +905,66 @@ export const PDFGenerator = () => {
             <button class="prev-btn" onClick={PDFPreview} >{preview ? `Hide Preview` : `Resume Preview`}</button>
           </div>
           <div style={{ flex: 1, color: 'red', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-           { !location.state ? (
-            <button class="prev-btn" onClick={savePDF}>Save</button>
-           ) :( <button class="prev-btn" onClick={updatePDF}>Update</button>)
-           }
+            {!location.state ? (
+              <button class="prev-btn" onClick={()=>{if(email=== ""){handleOpen()}else{handleOpen2()}}}>Save</button>
+            ) : (<button class="prev-btn" onClick={updatePDF}>Update</button>)
+            }
           </div>
         </div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+
+            <Typography id="modal-modal-description" sx={{}}>
+              <div className='login-modal' style={{ height: '40vh' }}>
+                <p>YOU MUST LOGIN TO SAVE RESUME</p>
+                <button onClick={() => googleLogin()}><FcGoogle />Sign-In Using Google</button>
+              </div>
+            </Typography>
+          </Box>
+        </Modal>
+        <Modal
+          open={open2}
+          onClose={handleClose2}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+
+            <Typography id="modal-modal-description" sx={{}}>
+              <div className='login-modal' style={{ height: '40vh' }}>
+               
+                
+                 {  saveMessage==="" && (
+                  <div style={{display:'flex', alignItems:'center',flexDirection:'column'}}>
+                    <input style={{textAlign:'center',fontFamily:'monospace',fontSize:'large'}} onChange={(event)=> setResumeName(event.target.value)} type='text' name='resumeName' placeholder='Enter Resume Name'></input>
+                    <div style={{fontSize:'11px',fontFamily:'Poppins',color:'blue'}}>e.g : company_name which you are applying for.</div>
+                    <div style={{display:'flex',flexDirection:'row',alignItems:'center', justifyContent:'center',gap:'2rem'}}>
+                    <Button onClick={savePDF}>Save</Button>
+                    <Button onClick={handleClose2}>Cancel</Button>
+                    </div>
+                  </div> )
+                  }
+                  
+                    {saveMessage==="Saving...." && <> 
+                    <div>{saveMessage}</div>
+                    <div className="spinner-container">
+                      <div className="loading-spinner">
+                      </div></div>
+                      </>}
+                  { saveMessage==="done" && <>
+                    <div>Resume Saved Succesfully</div>
+                    <button onClick={handleClose2}>OK</button>
+                    </>
+                  }
+              </div>
+            </Typography>
+          </Box>
+        </Modal>
       </div>
     )
 }

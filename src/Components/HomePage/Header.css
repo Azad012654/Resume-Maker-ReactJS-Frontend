@@ -281,6 +281,7 @@
     right: 0;
     width: 4rem;
     margin: auto;
+    color:white;
   }
   .loader--text:after {
     content: "Loading";

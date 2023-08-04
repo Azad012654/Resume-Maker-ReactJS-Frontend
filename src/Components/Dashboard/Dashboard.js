@@ -22,24 +22,30 @@ const Dashboard = () => {
   const [count, setCount] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [DeleteMessage, setDeleteMessage] = useState(false);
+  const [isLoading,setIsLoading]=useState(true);
+  const [idx,setIdx]=useState("");
 
 
-  const handleMouseEnter = (event) => {
+  const handleMouseEnter = (index) => {
     setShowMessage(true);
+    setIdx(index);
 
   };
 
   const handleMouseLeave = () => {
     setShowMessage(false);
+    setIdx("")
   };
 
-  const handleMouseEnterDelete = (event) => {
+  const handleMouseEnterDelete = (index) => {
     setDeleteMessage(true);
+    setIdx(index);
 
   };
 
   const handleMouseLeaveDelete = () => {
     setDeleteMessage(false);
+    setIdx("")
   };
 
 
@@ -54,7 +60,7 @@ const Dashboard = () => {
   useEffect(() => {
     try {
       const fetchEducation = async () => {
-        await fetch(`http://localhost:8080/get-education/${encodeURIComponent(loggedUser)}`)
+        await fetch(`http://localhost:8080/get-education/${loggedUser}`)
           .then((response) => {
             return response.json();
           }).then((data) => {
@@ -63,7 +69,7 @@ const Dashboard = () => {
       }
 
       const fetchExperience = async () => {
-        await fetch(`http://localhost:8080/get-experience/${encodeURIComponent(loggedUser)}`)
+        await fetch(`http://localhost:8080/get-experience/${loggedUser}`)
           .then((experience_response) => {
             return experience_response.json();
           }).then((data) => {
@@ -72,9 +78,9 @@ const Dashboard = () => {
 
 
       }
-      console.log(user.email)
+      
       const fetchProjects = async () => {
-        await fetch(`http://localhost:8080/get-projects/${encodeURIComponent(loggedUser)}`)
+        await fetch(`http://localhost:8080/get-projects/${loggedUser}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -83,7 +89,7 @@ const Dashboard = () => {
       }
 
       const fetchCertificate = async () => {
-        await fetch(`http://localhost:8080/get-certificate/${encodeURIComponent(loggedUser)}`)
+        await fetch(`http://localhost:8080/get-certificate/${loggedUser}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -92,7 +98,7 @@ const Dashboard = () => {
       }
 
       const fetchSkills = async () => {
-        await fetch(`http://localhost:8080/get-skills/${encodeURIComponent(loggedUser)}`)
+        await fetch(`http://localhost:8080/get-skills/${loggedUser}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
@@ -101,25 +107,26 @@ const Dashboard = () => {
       }
 
       const fetchPersonalData = async () => {
-        await fetch(`http://localhost:8080/get-personal/${encodeURIComponent(loggedUser)}`)
+        await fetch(`http://localhost:8080/get-personal/${loggedUser}`)
           .then((project_response) => {
             return project_response.json();
           }).then((data) => {
             setPersonalData(data);
           })
       }
-      fetchEducation();
-      fetchExperience();
-      fetchProjects();
-      fetchCertificate();
-      fetchSkills();
-      fetchPersonalData();
+      Promise.all([
+      fetchEducation(),
+      fetchExperience(),
+      fetchProjects(),
+      fetchCertificate(),
+      fetchSkills(),
+      fetchPersonalData()
+    ]).then(()=> setIsLoading(false)).catch(()=> setIsLoading(false))
     } catch (error) {
       console.log(error)
     }
 
-
-
+    
   }, [loggedUser]);
 
   //Select Resume Function Starts
@@ -185,7 +192,7 @@ const Dashboard = () => {
 
   const deleteResume = async (resumeId) => {
 
-   await fetch(`http://localhost:8080/delete-resume/${encodeURIComponent(resumeId)}`, {
+   await fetch(`http://localhost:8080/delete-resume/${resumeId}`, {
       method: 'delete'
     }).then((response) => {
       if(response.ok){
@@ -196,16 +203,28 @@ const Dashboard = () => {
     setCount(count => count);
 
   }
-  
+  console.log(personalData)
   //----------------ends----------------------
-  if (loading) {
-    return (<div style={{ height: '100vh' }}>Loading</div>)
+  if (isLoading) {
+    return (
+      <div className='container'>
+        <div className='loader'>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--dot'></div>
+    <div className='loader--text'></div>
+  </div>
+      </div>
+    )
   } else
     return (
       <div className='dashboard-container'>
         <div className='resume-section'>
           <div className='resume-header'>
-            <p>RESUMES</p>
+            <p>RESUMES  </p>
           </div>
           <div className='resume-container'>
             {
@@ -213,9 +232,9 @@ const Dashboard = () => {
                 if (item.resumeId) {
                   return (
                     <div className='resume-details' >
-                      <div style={{ color: 'whitesmoke', marginBottom: '10px', fontFamily: 'Poppins' }}>Resume {index + 1}</div>
-                      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} key={index} onClick={() => selectResume(item.resumeId)} className='resumes-thumbnail'>
-                        {showMessage && (
+                      <div style={{ color: 'whitesmoke', marginBottom: '10px', fontFamily: 'Poppins' }}>1. {item.resumename}</div>
+                      <div onMouseEnter={()=> handleMouseEnter(index)} onMouseLeave={handleMouseLeave} key={index} onClick={() => selectResume(item.resumeId)} className='resumes-thumbnail'>
+                        {showMessage && idx===index &&  (
                           <div className="floating-message">
                             Click to Edit
                           </div>
@@ -227,12 +246,12 @@ const Dashboard = () => {
                         <div className='resume-date'>Created On : {item.createdAt} </div>
 
                       </div>
-                      <div onMouseEnter={handleMouseEnterDelete} on onMouseLeave={handleMouseLeaveDelete} className='resume-delete-btn'>
-                        <DeleteForeverOutlinedIcon onClick={() => deleteResume(item.resumeId)} />
-                        {DeleteMessage && (
+                      <button onClick={() => deleteResume(item.resumeId)} onMouseEnter={()=> handleMouseEnterDelete(index)} on onMouseLeave={handleMouseLeaveDelete} className='resume-delete-btn'>
+                        <DeleteForeverOutlinedIcon  />
+                        {DeleteMessage && idx===index && (
                           <div style={{ position: 'absolute', bottom: '-22px',fontSize:'small',fontWeight:'bold' }}>DELETE</div>)
                         }
-                      </div>
+                      </button>
 
                     </div>
                   )
