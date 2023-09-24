@@ -5,8 +5,13 @@
 }
 .container{
     display:flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items:flex-start;
+    justify-content:flex-start;
+    padding-left: 28px;
+    gap:0.8rem;
+    margin-top: 20px;
+    animation: slide-up3 1s ;
 }
 .wave{
     flex:1;
@@ -30,11 +35,24 @@
     color:rgb(249, 247, 247);
     
 }
+.resume-image-container{
+    width:400px;
+    height:60vh;
+    background-image: url('../../Assets/resume-demo.jpg');
+    background-size: cover;
+    object-fit: cover;
+    position: absolute;
+    right:20%;
+    bottom:10%;
+    border-radius: 7px;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.19);
+    animation: slide-left 1s ease-out forwards;
+}
 .button{
     /* font-family: 'Roboto'; */
     width:200px;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.19);
-
+    margin-top: 20px;
 }
 .home-desc h1{
     /* font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; */
@@ -46,51 +64,73 @@
     /* font-family:'Euclid Circular B'; */
     font-family: monospace;
     /* font-style: italic; */
-    text-shadow:0 0 3px #fcfcfc, 0 0 5px #3a3a41;
-    text-align: center;
+    /* text-shadow:0 0 3px #fcfcfc, 0 0 5px #3a3a41; */
+    /* text-align: center; */
     box-sizing: border-box;
     
 }
 .home-desc h1:nth-child(1){
-    animation: hometext 1s ease forwards;
+    animation: slide-up 1s ease-out forwards;
 }
 .home-desc h1:nth-child(2){
-    animation: hometext2 1s ease forwards;
+    animation: slide-up2 0.5s ease-out forwards;
 }
-.home-desc h1:nth-child(3){
-    animation: hometext3 1s ease-out forwards;
+
+@keyframes slide-up3 {
+    from{
+        transform: translateY(10vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+}
+@keyframes slide-left {
+    from{
+        transform: translateX(10vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+      }
 }
 
 
-@keyframes hometext {
-    0%{ transform: translateY(-100vh); }
-    100%{transform: translateX(0vh);
+@keyframes slide-up {
+    from{
+        transform: translateY(-5vh);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+      }
 }
-@keyframes hometext2 {
-    0%{ transform: translateX(-100vh); }
-    100%{transform: translateX(0vh);
+@keyframes slide-up2 {
+    from{
+        transform: translateY(-5vh);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+      }
 }
-@keyframes hometext3 {
-    0%{ transform: translateX(100vh); }
-    100%{transform: translateX(0vh);
-    }
-}
+
 
 .home-page-container{
     height:93vh;
+    background-image: url('../../Assets/resume-7244898_1920.png');
 }
 .content{
     /* height:93vh; */
     width:100%;
-    background-image: url('../../Assets/725.jpg');
+    /* background-image: url('../../Assets/725.jpg'); */
     /* background-image: url('../../Assets/abstract-backg.jpg'); */
     /* background-color: #313b47; */
-    background-size: cover;
+    /* background-size: cover; */
     position:absolute;
     /* object-fit: cover; */
     /* opacity: 0.4; */
+    /* background-color: antiquewhite; */
 }
 .home-desc{
     flex:1;
@@ -106,8 +146,8 @@
     /* font-family: 'Roboto'; */
     border-radius: 7px;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.19);
-        height:65vh;
-        width:50%;
+        height:95vh;
+        width:100%;
 }
 .content{
     display:flex;

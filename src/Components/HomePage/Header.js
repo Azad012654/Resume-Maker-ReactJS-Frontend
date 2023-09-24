@@ -84,7 +84,7 @@ const Header = () => {
           </>
         ) : (
           <div className='mobile-login-btn'>
-            <button onClick={displayRespNav}><Link style={{color:'black',fontWeight:'bold',textShadow:'none'}} className='login-link' to="/Login" > Login</ Link></button>
+            <button onClick={displayRespNav}><Link style={{color:'black',fontWeight:'bold',textShadow:'none',textDecoration:'none',fontFamily:'cursive'}} className='login-link' to="/Login" >LOGIN</ Link></button>
           </div>
         )
         }
@@ -99,8 +99,7 @@ const Header = () => {
         {!user ? (
           <div className='buttons'>
 
-            <button><Link to="/Login" > Login</ Link></button>
-
+            <button><Link style={{textDecoration:'none', fontWeight:'bold', fontSize:'medium',fontFamily:'serif'}} to="/Login" > LOGIN</ Link></button>
 
           </div>
         ) : (

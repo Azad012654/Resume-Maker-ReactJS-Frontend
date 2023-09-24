@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -6,8 +6,13 @@ import { auth } from '../../Utills/Firebase'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import resumeThumbnail from '../../Assets/resume-thumbnail.png';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 
 import './Dashboard.css';
+import { red } from '@mui/material/colors';
 const Dashboard = () => {
 
   const navigate = useNavigate();
@@ -22,9 +27,13 @@ const Dashboard = () => {
   const [count, setCount] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [DeleteMessage, setDeleteMessage] = useState(false);
-  const [isLoading,setIsLoading]=useState(true);
-  const [idx,setIdx]=useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [idx, setIdx] = useState("");
+  const [deleteMessage,SetDelete]=useState(true)
+  const [open, setOpen] = useState(false);
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () =>{ setOpen(false) }
 
   const handleMouseEnter = (index) => {
     setShowMessage(true);
@@ -47,111 +56,96 @@ const Dashboard = () => {
     setDeleteMessage(false);
     setIdx("")
   };
+  //---------------------ends---------------------
 
+  //Modal Style 
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'white',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 1.5,
+    borderRadius:'8px',
+  };
+  //----------------ends---------------------------
 
-
-
-
-
-  useEffect(() => {
+  useMemo(() => {
     setLoggedUser(user.email)
   }, [])
+  const fetchEducation = async () => {
+    // await fetch(`http://localhost:8080/get-education/${loggedUser}`)
+    await fetch(`http://localhost:8080/get-education/${loggedUser}`)
+      .then((response) => {
+        return response.json();
+      }).then((data) => {
+        setEducation(data);
+      })
+  }
+
+  const fetchExperience = async () => {
+    await fetch(`http://localhost:8080/get-experience/${loggedUser}`)
+      .then((experience_response) => {
+        return experience_response.json();
+      }).then((data) => {
+        setExperience(data);
+      })
+
+
+  }
+
+  const fetchProjects = async () => {
+    await fetch(`http://localhost:8080/get-projects/${loggedUser}`)
+      .then((project_response) => {
+        return project_response.json();
+      }).then((data) => {
+        setProjects(data);
+      })
+  }
+
+  const fetchCertificate = async () => {
+    await fetch(`http://localhost:8080/get-certificate/${loggedUser}`)
+      .then((project_response) => {
+        return project_response.json();
+      }).then((data) => {
+        setCertificate(data);
+      })
+  }
+
+  const fetchSkills = async () => {
+    await fetch(`http://localhost:8080/get-skills/${loggedUser}`)
+      .then((project_response) => {
+        return project_response.json();
+      }).then((data) => {
+        setSkills(data);
+      })
+  }
+
+  const fetchPersonalData = async () => {
+    await fetch(`http://localhost:8080/get-personal/${loggedUser}`)
+      .then((project_response) => {
+        return project_response.json();
+      }).then((data) => {
+        setPersonalData(data);
+      })
+  }
 
   useEffect(() => {
-    try {
-      const fetchEducation = async () => {
-<<<<<<< HEAD
-        await fetch(`http://localhost:8080/get-education/${loggedUser}`)
-=======
-        await fetch(`https://resume-builder-fatj.onrender.com/get-education/${encodeURIComponent(loggedUser)}`)
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
-          .then((response) => {
-            return response.json();
-          }).then((data) => {
-            setEducation(data);
-          })
-      }
-
-      const fetchExperience = async () => {
-<<<<<<< HEAD
-        await fetch(`http://localhost:8080/get-experience/${loggedUser}`)
-=======
-        await fetch(`https://resume-builder-fatj.onrender.com/get-experience/${encodeURIComponent(loggedUser)}`)
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
-          .then((experience_response) => {
-            return experience_response.json();
-          }).then((data) => {
-            setExperience(data);
-          })
-
-
-      }
-      
-      const fetchProjects = async () => {
-<<<<<<< HEAD
-        await fetch(`http://localhost:8080/get-projects/${loggedUser}`)
-=======
-        await fetch(`https://resume-builder-fatj.onrender.com/get-projects/${encodeURIComponent(loggedUser)}`)
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
-          .then((project_response) => {
-            return project_response.json();
-          }).then((data) => {
-            setProjects(data);
-          })
-      }
-
-      const fetchCertificate = async () => {
-<<<<<<< HEAD
-        await fetch(`http://localhost:8080/get-certificate/${loggedUser}`)
-=======
-        await fetch(`https://resume-builder-fatj.onrender.com/get-certificate/${encodeURIComponent(loggedUser)}`)
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
-          .then((project_response) => {
-            return project_response.json();
-          }).then((data) => {
-            setCertificate(data);
-          })
-      }
-
-      const fetchSkills = async () => {
-<<<<<<< HEAD
-        await fetch(`http://localhost:8080/get-skills/${loggedUser}`)
-=======
-        await fetch('https://resume-builder-fatj.onrender.com/get-skills/')
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
-          .then((project_response) => {
-            return project_response.json();
-          }).then((data) => {
-            setSkills(data);
-          })
-      }
-
-      const fetchPersonalData = async () => {
-<<<<<<< HEAD
-        await fetch(`http://localhost:8080/get-personal/${loggedUser}`)
-=======
-        await fetch(`https://resume-builder-fatj.onrender.com/get-personal/${encodeURIComponent(loggedUser)}`)
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
-          .then((project_response) => {
-            return project_response.json();
-          }).then((data) => {
-            setPersonalData(data);
-          })
-      }
+    const getFunc = async () => {
       Promise.all([
-      fetchEducation(),
-      fetchExperience(),
-      fetchProjects(),
-      fetchCertificate(),
-      fetchSkills(),
-      fetchPersonalData()
-    ]).then(()=> setIsLoading(false)).catch(()=> setIsLoading(false))
-    } catch (error) {
-      console.log(error)
+        await fetchEducation(),
+        await fetchExperience(),
+        await fetchProjects(),
+        await fetchCertificate(),
+        await fetchSkills(),
+        await fetchPersonalData(),
+      ]).then(() => setIsLoading(false))
     }
-
-    
-  }, [loggedUser]);
+    getFunc()
+  }, [loggedUser, count]);
 
   //Select Resume Function Starts
 
@@ -215,40 +209,35 @@ const Dashboard = () => {
   }
 
   const deleteResume = async (resumeId) => {
-
-<<<<<<< HEAD
-   await fetch(`http://localhost:8080/delete-resume/${resumeId}`, {
-=======
-   await fetch(`https://resume-builder-fatj.onrender.com/delete-resume/${encodeURIComponent(resumeId)}`, {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+    
+    await fetch(`http://localhost:8080/delete-resume/${resumeId}`, {
       method: 'delete'
-    }).then((response) => {
-      if(response.ok){
-        window.location.reload();
+    }
+    )
+    .then((response) => {
+      if (response.ok) {
+        setCount(1 + 1);
       }
 
     })
-    setCount(count => count);
+    .then(()=> handleClose())
+
 
   }
-  console.log(personalData)
+  console.log(deleteMessage)
   //----------------ends----------------------
-<<<<<<< HEAD
   if (isLoading) {
-=======
-  if (education.length<0) {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
     return (
       <div className='container'>
         <div className='loader'>
-    <div className='loader--dot'></div>
-    <div className='loader--dot'></div>
-    <div className='loader--dot'></div>
-    <div className='loader--dot'></div>
-    <div className='loader--dot'></div>
-    <div className='loader--dot'></div>
-    <div className='loader--text'></div>
-  </div>
+          <div className='loader--dot'></div>
+          <div className='loader--dot'></div>
+          <div className='loader--dot'></div>
+          <div className='loader--dot'></div>
+          <div className='loader--dot'></div>
+          <div className='loader--dot'></div>
+          <div className='loader--text'></div>
+        </div>
       </div>
     )
   } else
@@ -264,9 +253,9 @@ const Dashboard = () => {
                 if (item.resumeId) {
                   return (
                     <div className='resume-details' >
-                      <div style={{ color: 'whitesmoke', marginBottom: '10px', fontFamily: 'Poppins' }}>1. {item.resumename}</div>
-                      <div onMouseEnter={()=> handleMouseEnter(index)} onMouseLeave={handleMouseLeave} key={index} onClick={() => selectResume(item.resumeId)} className='resumes-thumbnail'>
-                        {showMessage && idx===index &&  (
+                      <div style={{ color: 'whitesmoke', marginBottom: '10px', fontFamily: 'Poppins' }}>{index+1}. {item.resumename}</div>
+                      <div onMouseEnter={() => handleMouseEnter(index)} onMouseLeave={handleMouseLeave} key={index} onClick={() => selectResume(item.resumeId)} className='resumes-thumbnail'>
+                        {showMessage && idx === index && (
                           <div className="floating-message">
                             Click to Edit
                           </div>
@@ -278,39 +267,69 @@ const Dashboard = () => {
                         <div className='resume-date'>Created On : {item.createdAt} </div>
 
                       </div>
-                      <button onClick={() => deleteResume(item.resumeId)} onMouseEnter={()=> handleMouseEnterDelete(index)} on onMouseLeave={handleMouseLeaveDelete} className='resume-delete-btn'>
-                        <DeleteForeverOutlinedIcon  />
-                        {DeleteMessage && idx===index && (
-                          <div style={{ position: 'absolute', bottom: '-22px',fontSize:'small',fontWeight:'bold' }}>DELETE</div>)
+                      <button key={index + 1} onClick={handleOpen} onMouseEnter={() => handleMouseEnterDelete(index)} on onMouseLeave={handleMouseLeaveDelete} className='resume-delete-btn'>
+                        <DeleteForeverOutlinedIcon />
+                        {DeleteMessage && idx === index && (
+                          <div style={{ position: 'absolute', bottom: '-22px', fontSize: 'small', fontWeight: 'bold' }}>DELETE</div>)
                         }
                       </button>
+                      <Modal
+                        open={open}
+                        onClose={handleClose}
+                        // aria-labelledby="modal-modal-title"
+                        // aria-describedby="modal-modal-description"
+                      >
+                        <Box sx={style}>
 
+                          <Typography id="modal-modal-description" sx={{}}>
+                            { deleteMessage &&
+                              <div className='login-modal' style={{ height: '40vh' }}>
+                                <div style={{display:'flex',gap:'5px',fontFamily:'Poppins'}}>Are you sure you you want to delete <div style={{color:'red',textAlign:'center'}}> '{item.resumename}'</div> </div>
+                                <div style={{display:'flex',gap:'20px'}}>
+                                <Button onClick={() => { SetDelete(false); deleteResume(item.resumeId);}}>Yes</Button>
+                                <Button onClick={handleClose}>No</Button>
+                                </div>
+                                
+                              </div>
+                              }
+                              { !deleteMessage &&  <div style={{display:'flex', flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
+                                <div>Deleting {item.resumename}</div>
+                                <div className="spinner-container">
+                      <div className="loading-spinner">
+                      </div></div>
+                       </div>
+                }
+                            
+                          </Typography>
+                        </Box>
+                      </Modal>
                     </div>
                   )
                 }
-              })) : (<div className='resume-thumbnail'>
-                  <div onClick={()=> navigate('/pdf-generator') } className='empty-resume'>
-                    <div style={{fontSize:'small',fontWeight:'bolder',marginBottom:'8px'}}>No Resume Saved Yet</div>
-                  
-                  <AddCircleOutlineOutlinedIcon fontSize='large' />
-                  <div style={{fontSize:'small',fontWeight:'bolder',marginBottom:'20px'}}>Click To Create</div>
+              })) : (<div style={{marginTop:'30px', maeginBottom:'30px'}}><div className='resume-thumbnail'>
+                <div onClick={() => navigate('/pdf-generator')} className='empty-resume'>
+                  <div style={{ fontSize: 'small', fontWeight: 'bolder', marginBottom: '8px' }}>No Resume Saved Yet</div>
 
-                  </div>
-                
-              </div>)
+                  <AddCircleOutlineOutlinedIcon fontSize='large' />
+                  <div style={{ fontSize: 'small', fontWeight: 'bolder', marginBottom: '20px' }}>Click To Create</div>
+
+                </div>
+
+              </div></div>)
             }
           </div>
 
         </div>
         <div className='coverletter-section'></div>
-            <div className='resume-header'>COVER LETTERS</div>
-            <div className='coverletter-container'>
-            <div className='coverletter-items'>
-            <div style={{marginLeft:'22px',marginTop:'15px',fontSize:'small',fontWeight:'bolder'}} className='resumes-thumbnail'>
+        <div style={{marginTop:'30px'}} className='resume-header'>COVER LETTERS</div>
+        <div className='coverletter-container'>
+          <div className='coverletter-items'>
+            <div style={{ marginLeft: '22px', marginTop: '15px', fontSize: 'small', fontWeight: 'bolder' }} className='resumes-thumbnail'>
               No Cover Letters Saved
             </div>
-            </div>
-            </div>
+          </div>
+        </div>
+
       </div>
     )
 }

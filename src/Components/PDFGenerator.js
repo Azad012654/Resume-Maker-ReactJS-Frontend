@@ -1,4 +1,4 @@
-import { React, useRef, useState, useEffect } from 'react'
+import { React, useRef, useState, useEffect,useMemo } from 'react'
 import './PDFGenerator.css';
 import { PDFViewer, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import EducationFields from './EducationFields';
@@ -70,6 +70,8 @@ export const PDFGenerator = () => {
   const [deleteSpecific, setDeleteSpecific] = useState([]);
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const [open3, setOpen3] = useState(false);
+
 
 
   const handleOpen2 = () => setOpen2(true);
@@ -77,6 +79,9 @@ export const PDFGenerator = () => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleOpen3 = () =>{updatePDF(); setOpen3(true)};
+  const handleClose3 = () => setOpen3(false);
   useEffect(() => {
     // if(!location.state){
     //   setEducationFields(newEducation);
@@ -200,7 +205,7 @@ export const PDFGenerator = () => {
     setEducationFields(updatedData)
     setTimeout(scrollUp, 100)
   }
-  console.log(deleteSpecific)
+  
   const handleInputChange = (index, field, value) => {
 
     const newEducationFields = [...educationFields];
@@ -368,7 +373,8 @@ export const PDFGenerator = () => {
   }
 
   const saveEducation = async () => {
-    const response = await fetch('https://resume-builder-fatj.onrender.com/add-education', {
+    const response = await fetch('http://localhost:8080/add-education', {
+      
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -380,7 +386,8 @@ export const PDFGenerator = () => {
 
 
   const saveExperience = async () => {
-    const response = await fetch('https://resume-builder-fatj.onrender.com/add-experience', {
+    const response = await fetch('http://localhost:8080/add-experience', {
+      
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -391,7 +398,8 @@ export const PDFGenerator = () => {
   }
 
   const saveProjects = async () => {
-    const response = await fetch('https://resume-builder-fatj.onrender.com/add-projects', {
+    const response = await fetch('http://localhost:8080/add-projects', {
+      
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -403,7 +411,8 @@ export const PDFGenerator = () => {
 
   const saveSkills = async () => {
     try {
-      const response = await fetch('https://resume-builder-fatj.onrender.com/add-skills', {
+      await fetch('http://localhost:8080/add-skills', {
+        
         method: 'post',
         headers: {
           'Content-Type': 'application/json'
@@ -411,17 +420,15 @@ export const PDFGenerator = () => {
         body: JSON.stringify(skills)
 
       })
-      if (response.ok) {
-        const responseData = await response.json();
-
-      }
+      
     } catch (error) {
       console.log(error);
     }
   }
 
   const saveCertificate = async () => {
-    const response = await fetch('https://resume-builder-fatj.onrender.com/add-certificate', {
+    await fetch('http://localhost:8080/add-certificate', {
+      
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -442,12 +449,9 @@ export const PDFGenerator = () => {
       resumeId: resumeId,
       resumename : ResumeName,
     }
-<<<<<<< HEAD
     console.log(personalData)
     await fetch('http://localhost:8080/add-personalInfo', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/add-personalInfo', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -473,18 +477,20 @@ export const PDFGenerator = () => {
         ]).then(() => { setSaveMessage("done") })
 
       } catch (error) {
-        alert(error);
+        console.log(error);
       }
 
     } else {
       handleOpen()
     }
   }
-  console.log(email)
+ 
   //-------------ends---------------
 
   // Main Resume PDF Template
-  const content = (
+  
+ 
+ const content = (
     <Document>
       <Page size="A4" style={styles.page}>
         {name.length > 0 && (
@@ -614,15 +620,14 @@ export const PDFGenerator = () => {
       </Page>
     </Document>
   );
+ 
+  
   //--------------------------ends---------------------
 
   // Update Functions
   const updateEducation = async () => {
-<<<<<<< HEAD
     await fetch('http://localhost:8080/update-education', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/update-education', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -633,11 +638,8 @@ export const PDFGenerator = () => {
   }
 
   const updateExperience = async () => {
-<<<<<<< HEAD
     await fetch('http://localhost:8080/update-experience', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/update-experience', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -648,11 +650,8 @@ export const PDFGenerator = () => {
   }
 
   const updateSkills = async () => {
-<<<<<<< HEAD
     await fetch('http://localhost:8080/update-skills', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/update-skills', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -663,11 +662,8 @@ export const PDFGenerator = () => {
   }
 
   const updateProjects = async () => {
-<<<<<<< HEAD
     await fetch('http://localhost:8080/update-projects', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/update-projects', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -689,11 +685,8 @@ export const PDFGenerator = () => {
       summary: summary,
       resumeId: resumeId
     }]
-<<<<<<< HEAD
     await fetch('http://localhost:8080/update-personal', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/update-personal', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -704,11 +697,8 @@ export const PDFGenerator = () => {
   }
 
   const updateCertificate = async () => {
-<<<<<<< HEAD
     await fetch('http://localhost:8080/update-certificate', {
-=======
-    const response = await fetch('https://resume-builder-fatj.onrender.com/update-certificate', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -718,13 +708,9 @@ export const PDFGenerator = () => {
     })
   }
 
-<<<<<<< HEAD
   const deleteFields = async () => {
     await fetch('http://localhost:8080/delete-fields', {
-=======
-  const deleteFields = async()=>{
-    const response = await fetch('https://resume-builder-fatj.onrender.com/delete-fields', {
->>>>>>> bbf7e09848fdf74c2a93b154cbb35f9a6115d002
+      
       method: 'delete',
       headers: {
         'Content-Type': 'application/json'
@@ -738,18 +724,17 @@ export const PDFGenerator = () => {
 
   const updatePDF = async () => {
     try {
-      await updateCertificate()
-      await updateEducation()
-      await updateExperience()
-      await updatePersonal()
-      await updateSkills()
-      await updateProjects()
 
-      await deleteFields();
-
-      alert("Resume Successfully Updated");
-
-
+      Promise.all([
+        await updateCertificate(),
+      await updateEducation(),
+      await updateExperience(),
+      await updatePersonal(),
+      await updateSkills(),
+      await updateProjects(),
+      await deleteFields(),
+      ]).then(()=> handleClose3())
+  
     } catch (error) {
       console.log("Update Error" + error)
     }
@@ -940,10 +925,28 @@ export const PDFGenerator = () => {
           <div style={{ flex: 1, color: 'red', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {!location.state ? (
               <button class="prev-btn" onClick={()=>{if(email=== ""){handleOpen()}else{handleOpen2()}}}>Save</button>
-            ) : (<button class="prev-btn" onClick={updatePDF}>Update</button>)
+            ) : (<button class="prev-btn" onClick={handleOpen3}>Update</button>)
             }
           </div>
         </div>
+        <Modal
+          open={open3}
+          onClose={handleClose3}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+
+            <Typography id="modal-modal-description" sx={{}}>
+              <div className='login-modal' style={{ height: '40vh' }}>
+                <p>Updating....</p>
+                <div className="spinner-container">
+                      <div className="loading-spinner">
+                      </div></div>
+              </div>
+            </Typography>
+          </Box>
+        </Modal>
         <Modal
           open={open}
           onClose={handleClose}
@@ -1001,5 +1004,3 @@ export const PDFGenerator = () => {
       </div>
     )
 }
-
-// export default PDFGenerator
